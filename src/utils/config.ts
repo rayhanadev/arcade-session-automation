@@ -3,6 +3,10 @@ import Conf from "conf";
 import pkg from "../../package.json";
 
 const schema = {
+  slack_member_id: {
+    type: "string",
+    default: "",
+  },
   slack_browser_token: {
     type: "string",
     default: "",
