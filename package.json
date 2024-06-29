@@ -1,7 +1,17 @@
 {
-  "name": "arcade-session-automation",
-  "module": "src/index.ts",
   "type": "module",
+  "name": "arcade-session-automation",
+  "version": "0.0.0-beta",
+  "module": "src/index.ts",
+  "scripts": {
+    "start": "bun run src/index.ts",
+    "build": "bun build src/index.ts --outfile dist/arcade --compile"
+  },
+  "dependencies": {
+    "@inquirer/prompts": "^5.0.7",
+    "conf": "^13.0.1",
+    "sade": "^1.8.1"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
