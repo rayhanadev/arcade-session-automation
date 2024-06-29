@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Box, Text, useApp, useFocus } from "ink";
-import notifier from "node-notifier";
 
 import { useStdoutDimensions } from "../hooks/useStdoutDimensions";
 import { config } from "../utils/config";
-import { slackRequest } from "../utils/slack";
+import { notify } from "../utils/notify.ts";
 
 export default function Session({
   goal = "No Goal",
@@ -35,36 +34,34 @@ export default function Session({
           return response.text();
         })
         .then((timeRemaining) => {
-          if (firstLoad.current === 0) {
-            notifier.notify({
-              title: "Arcade Hour",
-              message: `Connected to your session!`,
-            });
-            firstLoad.current++;
-            return;
-          }
-
           const milliseconds = Number(timeRemaining);
           const minutesLeft = Math.floor((milliseconds % 36e5) / 6e4);
           const secondsLeft = Math.floor((milliseconds % 6e4) / 1000);
 
+          setMinutes(minutesLeft.toString().padStart(2, "0"));
+          setSeconds(secondsLeft.toString().padStart(2, "0"));
+
+          if (firstLoad.current === 0) {
+            firstLoad.current++;
+            notify({
+              message: `Connected to your Arcade session! You have ${minutesLeft} minutes left.`,
+            });
+            return;
+          }
+
           if (minutesLeft > 0 && minutesLeft % 15 === 0 && secondsLeft === 0) {
-            notifier.notify({
-              title: "Arcade Hour",
+            notify({
               message: `You have ${minutesLeft} minutes left`,
             });
+            return;
           }
 
           if (minutesLeft === 0 && secondsLeft === 0) {
-            notifier.notify({
-              title: "Arcade Hour",
+            notify({
               message: `Time's up!`,
             });
             exit();
           }
-
-          setMinutes(minutesLeft.toString().padStart(2, "0"));
-          setSeconds(secondsLeft.toString().padStart(2, "0"));
         })
         .catch((error) => {
           exit();
